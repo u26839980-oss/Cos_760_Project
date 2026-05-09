@@ -2,6 +2,11 @@ from datasets import load_dataset
 from huggingface_hub import login
 from dotenv import load_dotenv
 import os
+import warnings
+
+# Disable TorchCodec to avoid FFmpeg dependency
+os.environ["DATASETS_AUDIO_PROCESSING_BACKEND"] = "librosa"
+warnings.filterwarnings("ignore", category=UserWarning)
 
 load_dotenv()
 
