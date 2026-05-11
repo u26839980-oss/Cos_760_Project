@@ -1,4 +1,4 @@
-Project Goal (one line)
+Project Goal
 
 Compare transcripts from three off‑the‑shelf ASR engines (Whisper, Lelapa, wav2vec‑2.0) on Setswana speech, then measure how transcription differences affect topic coherence (LDA, BERTopic, NMF).
 Team Roles (fixed)
@@ -9,18 +9,18 @@ Team Roles (fixed)
 
     Shaun – Data wrangling, evaluation framework, integration, report assembly
 
-Phase‑by‑Phase Step Guide
 Phase 1: Setup & Infrastructure (by 8 May)
 
-Goal: Common environment, repo, and a tiny test run to prove everything works.
+Goal: Common environment, repository, and a tiny end‑to‑end test run to prove everything works.
 
-    Create a GitHub repository (Shaun creates, others clone)
+    Create a GitHub repository (Shaun creates, others clone).
+    Use the following directory structure:
     text
 
     nlp-project/
     ├── data/
-    │   ├── raw_audio/          # original audio files
-    │   └── processed_audio/    # 16kHz mono wavs
+    │   ├── raw_audio/
+    │   └── processed_audio/      # 16kHz mono WAVs
     ├── transcripts/
     │   ├── whisper/
     │   ├── lelapa/
@@ -35,198 +35,173 @@ Goal: Common environment, repo, and a tiny test run to prove everything works.
     │   └── evaluation.py
     └── report/
 
-    Set up a shared Python environment (Colab notebook or local conda). Install:
-    bash
+    Set up a shared Python environment (Colab notebook or local conda).
+    Install libraries: torch, transformers, datasets, librosa, soundfile, openai-whisper, gensim, bertopic, scikit-learn, nltk, pandas, matplotlib, seaborn.
 
-    pip install torch transformers datasets librosa soundfile
-    pip install openai-whisper gensim bertopic scikit-learn nltk pandas matplotlib seaborn
+    Download a tiny Setswana test set (Kagiso).
+    Use the African Next Voices dataset (“dsfsi-anv/za-african-next-voices”, Setswana split) to grab 10 audio files and their reference transcripts. Save the audio in raw_audio/. This gives you real Setswana speech to iterate on immediately.
 
-    Download a small Setswana test clip from African Next Voices (Kagiso does this)
-    python
+    Build ASR wrappers (Josh, in src/asr.py).
 
-    from datasets import load_dataset
-    ds = load_dataset("dsfsi-anv/za-african-next-voices", "setswana", split="train", streaming=True)
-    # grab first 10 audio files + transcripts
-    for i, sample in enumerate(ds):
-        if i >= 10: break
-        # save audio to raw_audio/
-        sample["audio"]["array"]  # numpy array
-        # also save reference transcript if available (for later coherence sanity check)
+        For Whisper: a function that loads a model (e.g., large-v3), transcribes an audio file with language="tn", and returns the text.
 
-    This gives you real Setswana audio to iterate on immediately — no waiting.
+        For wav2vec‑2.0: load a pre‑trained checkpoint such as facebook/wav2vec2-xls-r-300m (or a publicly available fine‑tuned variant like DSFSI’s multilingual Whisper). Wrap it in a similar transcribe function.
 
-    Test ASR wrapper (Josh writes src/asr.py with a generic function)
-    python
+        For Lelapa: prepare a function that posts the audio file to the Lelapa API endpoint; you can test with a placeholder until the API key is obtained.
 
-    def transcribe_whisper(audio_path, model_size="large-v3"):
-        import whisper
-        model = whisper.load_model(model_size)
-        result = model.transcribe(audio_path, language="tn")  # Setswana ISO code
-        return result["text"]
+        Run Whisper on one test file to confirm it works.
 
-    Run it on one test file. Do the same for wav2vec‑2.0 (use facebook/wav2vec2-xls-r-300m or the DSFSI fine‑tuned Whisper models if you'd rather use their already fine‑tuned checkpoints — either is "off‑the‑shelf" in spirit). For Lelapa, just prepare the API call wrapper; you can test with a placeholder until you get a key.
+    Build a preprocessing script (Kagiso, in src/preprocess.py).
+    Include a cleaning function that lowercases text, removes punctuation and digits, and optionally filters out a small initial list of Setswana stopwords (e.g., le, a, o, ba, e, ka, wa, mo, go, ke). The output should be a single space‑separated string of tokens.
 
-    Test preprocessing pipeline (Kagiso writes src/preprocess.py)
-    python
-
-    import re, string
-    def clean(text):
-        text = text.lower()
-        text = re.sub(f"[{string.punctuation}]", " ", text)
-        text = re.sub(r"\d+", " ", text)
-        # simple Setswana stopwords – can start with empty list and add later
-        stopwords = set(["le", "a", "o", "ba", "e", "ka", "wa", "mo", "go", "ke"])
-        tokens = [t for t in text.split() if t not in stopwords and len(t) > 1]
-        return " ".join(tokens)
-
-    Test a full pass (Shaun orchestrates): take one test audio → transcribe with Whisper → clean → feed into a dummy LDA model (using gensim) and print a couple of topics. This confirms the pipeline connects.
+    Test a full, thin pass (Shaun orchestrates).
+    Take one test audio → transcribe with Whisper → clean the text → train a dummy LDA model with gensim and print a couple of topics. This confirms the pipeline connects end‑to‑end.
 
 Once step 6 completes, you are pipeline‑ready.
 Phase 2: Full ASR Transcription (9–14 May)
 
-Goal: Produce transcripts for the entire dataset (start with ANV Setswana subset, e.g., 1–2 hours of audio) from all three ASR systems.
+Goal: Produce transcripts for a substantial Setswana dataset (start with the ANV Setswana subset, aiming for 1–2 hours of audio) from all three ASR systems.
+Lead: Josh; Support: Shaun (computing resources, audio preparation).
 
-Josh leads; Shaun helps with computing resources.
+    Prepare the audio list (Shaun).
 
-    Prepare the audio list (Shaun)
+        Convert all raw audio to 16 kHz mono WAV using librosa or ffmpeg (script in src/preprocess_audio.py).
 
-        Convert all raw audio to 16kHz mono .wav using librosa or ffmpeg (script in src/preprocess_audio.py).
+        Store the uniform files in data/processed_audio/.
 
-        Store in data/processed_audio/.
+    Run Whisper transcription (Josh).
 
-    Run Whisper transcription (Josh)
+        Use the Whisper library with language="tn".
 
-        Use the whisper library with language="tn".
+        Process all files (sequentially or in batches on a GPU).
 
-        Process all files sequentially (or use batched inference on GPU).
+        Save each transcript as transcripts/whisper/<audiofile>.txt.
 
-        Save each transcript as transcripts/whisper/audiofile.txt (just the text, or a CSV with filename and text).
+    Run wav2vec‑2.0 transcription (Josh).
 
-    Run wav2vec‑2.0 transcription (Josh)
+        Load a suitable pre‑trained checkpoint. Using a model that has been fine‑tuned on South African languages (e.g., DSFSI’s multilingual variant) is allowed, as long as it is publicly available and used as‑is.
 
-        Load a pre‑trained checkpoint. Since you're not fine‑tuning, use facebook/wav2vec2-xls-r-300m with a Setswana language model head if available, or the DSFSI‑provided dsfsi-anv/multilingual-whisper-v3-turbo (which is already fine‑tuned on SA languages; using it as‑is counts as off‑the‑shelf, as it's publicly available).
+        Iterate over audio files; use GPU if possible.
 
-        Device: GPU if possible. Iterate over audio files.
+        Save outputs in transcripts/wav2vec/.
 
-        Save transcripts in transcripts/wav2vec/.
+    Run Lelapa transcription (Josh, with Shaun’s help for API access).
 
-    Run Lelapa transcription (Josh, with Shaun's help for API key)
+        Obtain the API key from Lelapa AI.
 
-        Request an API key from Lelapa AI (if not already done).
+        Implement a simple HTTP POST request that sends the audio file and receives the transcript.
 
-        Implement a simple requests POST to their endpoint with the audio file.
+        Store results in transcripts/lelapa/.
 
-        Save transcripts in transcripts/lelapa/.
-
-Output: Three folders of plain‑text transcripts, identical file naming convention. This is your core data.
+Output: Three folders of plain‑text transcripts with identical file naming.
 Phase 3: Topic Modelling (15–19 May)
 
 Goal: Train LDA, BERTopic, and NMF on each transcript set, compute coherence scores, and generate visualisations.
+Lead: Kagiso; Support: Josh with embeddings for BERTopic.
 
-Kagiso leads; Josh can help with the BERTopic embeddings.
+    Preprocess all transcripts (Kagiso).
 
-    Preprocess all transcripts (Kagiso, using src/preprocess.py)
+        Run the cleaning function from Phase 1 on every transcript.
 
-        Run the cleaning function on every transcript.
-
-        For each ASR system, concatenate all cleaned transcripts into a single list of documents (one document = one utterance or one short segment; group by speaker or time chunks if needed).
+        For each ASR system, create a list of documents (one document per utterance or per short time segment).
 
         Save the cleaned document lists as JSON files.
 
-    Vectorisation and DTM creation (for LDA & NMF)
-    python
+    Create document‑term matrices (for LDA and NMF).
 
-    from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
-    vectorizer = CountVectorizer(max_df=0.9, min_df=2)
-    dtm = vectorizer.fit_transform(documents)
+        Use scikit‑learn’s CountVectorizer (for LDA) and TfidfVectorizer (for NMF), with parameters like max_df=0.9 and min_df=2.
 
-    Train LDA (using Gensim)
-    python
+    Train LDA (using gensim).
 
-    from gensim.corpora import Dictionary
-    from gensim.models import LdaModel
-    # Create dictionary and corpus
-    texts = [doc.split() for doc in documents]
-    dictionary = Dictionary(texts)
-    corpus = [dictionary.doc2bow(text) for text in texts]
-    lda = LdaModel(corpus, num_topics=10, id2word=dictionary, passes=10)
-    # Compute coherence
-    from gensim.models import CoherenceModel
-    cm = CoherenceModel(model=lda, texts=texts, dictionary=dictionary, coherence='c_npmi')
-    npmi = cm.get_coherence()
-    cm_umass = CoherenceModel(model=lda, corpus=corpus, coherence='u_mass')
-    umass = cm_umass.get_coherence()
+        Convert the cleaned documents into a list of token lists, then create a gensim dictionary and a bag‑of‑words corpus.
 
-    Train BERTopic
-    python
+        Train an LdaModel with 10 topics, 10 passes over the data.
 
-    from bertopic import BERTopic
-    topic_model = BERTopic(embedding_model="paraphrase-multilingual-MiniLM-L12-v2", language="multilingual")
-    topics, probs = topic_model.fit_transform(documents)
-    # BERTopic has built-in topic diversity score
-    diversity = topic_model.topic_diversity(documents)
-    # You can also extract top words per topic and compute NPMI manually using Gensim's CoherenceModel (by constructing a topic list)
+        Compute two coherence measures: NPMI (c_npmi) and UMass (u_mass), using gensim’s CoherenceModel.
 
-    Train NMF
-    python
+    Train BERTopic.
 
-    from sklearn.decomposition import NMF
-    nmf = NMF(n_components=10, random_state=42)
-    doc_topic = nmf.fit_transform(tfidf_dtm)
-    # For coherence, need to extract top words per topic; then use Gensim CoherenceModel
-    # This is a bit manual but standard.
+        Instantiate a BERTopic model with a multilingual sentence‑transformer embedding (e.g., “paraphrase-multilingual-MiniLM-L12-v2”) and language="multilingual".
 
-    Record all coherence scores and keywords in a CSV file (results/coherence_scores.csv) with columns: ASR_system, topic_model, NPMI, UMass, topic_diversity.
+        Fit the model on the list of cleaned documents; retrieve topic assignments and topic information.
 
-    Create visualisations
+        Use BERTopic’s built‑in topic_diversity method. Additionally, manually compute NPMI coherence by extracting top‑n words per topic and feeding them to gensim’s CoherenceModel (by constructing a topic‑list format).
 
-        For LDA: pyLDAvis (pyLDAvis.gensim).
+    Train NMF.
 
-        For BERTopic: topic_model.visualize_topics(), visualize_barchart().
+        Fit an NMF model (10 components) on the TF‑IDF matrix.
 
-        Save all plots into results/.
+        Extract the most important words per topic.
+
+        Compute NPMI coherence by supplying these topic‑word lists to gensim’s CoherenceModel (this requires a small manual mapping).
+
+    Record all coherence scores in a CSV (results/coherence_scores.csv) with columns: ASR_system, topic_model, NPMI, UMass, topic_diversity.
+
+    Create visualisations.
+
+        For LDA: use pyLDAvis to generate an interactive HTML plot.
+
+        For BERTopic: generate topic visualisations (e.g., intertopic distance map, bar chart of top words per topic).
+
+        Save all plots in results/.
 
 Phase 4: Evaluation & Comparative Analysis (20–22 May)
 
-Goal: Build the comparative chart, conduct native speaker review, and analyse the normalisation impact.
+Goal: Build comparative charts, conduct a native‑speaker review, and analyse the effect of normalisation.
+Lead: Shaun; Support: Kagiso provides topic outputs.
 
-Shaun leads; Kagiso provides topic outputs.
+    Comparative NPMI bar chart (Shaun).
 
-    Comparative NPMI bar chart (Shaun)
-
-        Use seaborn or matplotlib to create a grouped bar chart: x-axis = topic model (LDA, BERTopic, NMF), grouped by ASR system (Whisper, Lelapa, wav2vec).
+        Use matplotlib or seaborn to create a grouped bar chart: x‑axis = topic model (LDA, BERTopic, NMF), colour‑grouped by ASR system (Whisper, Lelapa, wav2vec).
 
         Save as results/npmi_comparison.png.
 
-    Qualitative assessment (native speaker) – if you don’t have a Setswana speaker in your team, reach out now to the DSFSI lab or ask the supervisor for a contact.
+    Qualitative native‑speaker assessment.
 
-        For the best‑performing ASR + topic model combination (based on NPMI), extract the top 10 keywords per topic and 3–5 example sentences.
+        If the team does not have a Setswana speaker, reach out to the DSFSI lab or the supervisor for a contact.
 
-        Ask the native speaker to rate each topic’s interpretability on a 1–5 scale and note strange words or obvious transcription errors.
+        From the best‑performing ASR + topic model combination (according to NPMI), extract the top 10 keywords per topic and 3–5 example sentences.
 
-        Summarise in a table.
+        Ask the evaluator to rate each topic’s interpretability on a 1–5 scale and to note any strange words or obvious transcription errors.
 
-    Impact of text normalisation (Shaun/Kagiso)
+        Summarise findings in a table.
 
-        Run the same pipeline on one ASR output without the dictionary‑based correction step, and compare NPMI scores. Add a before/after bar chart.
+    Impact of text normalisation (Shaun/Kagiso).
 
-    Compile all results into a summary document for the report.
+        Choose one ASR output, run the pipeline both with and without the full cleaning/normalisation step (the stopword removal and lowercasing done in preprocessing).
+
+        Compute and compare NPMI scores.
+
+        Produce a before/after bar chart for inclusion in the report.
+
+    Compile a summary document of all results for the report.
 
 Phase 5: Report Writing & Final Submission (23–25 May)
 
-Goal: Polished report (max 3 pages?), code repository, and presentation.
+Goal: Polished report (target ~3 pages), clean code repository, and presentation.
 
-Section assignments (suggested):
-Section	Author
-Introduction & Background	Shaun (adapts from proposal)
-Data & Methodology (ASR part)	Josh
-Methodology (Topic Modelling & Evaluation)	Kagiso
-Results (coherence tables, chart, qualitative findings)	Kagiso + Shaun
-Discussion & Conclusion	All (Shaun compiles)
-References	All
+Suggested section assignments:
 
-    Code repository: Clean up notebooks into src/ scripts with a README.md describing how to run.
+    Introduction & Background – Shaun (adapt from proposal)
 
-    Presentation: 5–6 slides summarising the pipeline, key chart, and native speaker insights. Can be done on the 24th.
+    Data & Methodology (ASR) – Josh
 
-Contingency if COVID‑19 Data Never Comes
+    Methodology (Topic Modelling & Evaluation) – Kagiso
+
+    Results (coherence tables, chart, qualitative findings) – Kagiso + Shaun
+
+    Discussion & Conclusion – All, compiled by Shaun
+
+    References – All
+
+    Code repository clean‑up:
+
+        Move notebook experiments into well‑documented scripts under src/.
+
+        Write a README.md that explains how to set up the environment, run each step, and reproduce the results.
+
+    Presentation:
+
+        Prepare 5–6 slides summarising the pipeline, the main comparison chart, and native‑speaker insights.
+
+        Can be prepared on 24 May and presented as needed.
