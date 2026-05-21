@@ -239,7 +239,7 @@ def stage_evaluation(all_results: dict, preprocessed: dict,
     logger.info("="*60)
 
     from evaluation import (evaluate_all_conditions, compute_error_propagation,
-                            save_evaluation_results, print_summary_table)
+                            save_evaluation_results, print_topics)
     from topic_modeling import run_lda
 
     # ── 4a. Coherence for all 9 conditions ─────────────────────
