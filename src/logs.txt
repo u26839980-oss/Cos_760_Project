@@ -1,5 +1,0 @@
-16/05/2025: 
-
-Note: If running windows, you need to have ffmpeg (as whisper requires it). Trust me, i know the pain after 45 mins of pain... :(
-Update: Code body of whisper and lelapa complete, currently in debugging stage 
-
