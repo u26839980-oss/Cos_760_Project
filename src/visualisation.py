@@ -111,7 +111,7 @@ def plot_coherence_comparison(df: pd.DataFrame, metric: str = "npmi",
     fig.tight_layout()
     if out_path:
         fig.savefig(out_path, bbox_inches="tight")
-        logger.info(f"  Saved coherence chart → {out_path}")
+        logger.info(f"  Saved coherence chart -> {out_path}")
     return fig
 
 
@@ -130,7 +130,7 @@ def plot_diversity(df: pd.DataFrame, out_path: str | None = None) -> plt.Figure:
 
     if out_path:
         fig.savefig(out_path, bbox_inches="tight")
-        logger.info(f"  Saved diversity chart → {out_path}")
+        logger.info(f"  Saved diversity chart -> {out_path}")
     return fig
 
 
@@ -183,7 +183,7 @@ def plot_error_propagation(err_df: pd.DataFrame,
 
     if out_path:
         fig.savefig(out_path, bbox_inches="tight")
-        logger.info(f"  Saved error propagation chart → {out_path}")
+        logger.info(f"  Saved error propagation chart -> {out_path}")
     return fig
 
 
@@ -218,7 +218,7 @@ def save_pyldavis(lda_result: dict, out_path: str) -> str:
     logger.info("  Preparing pyLDAvis …")
     vis_data = gensimvis.prepare(lda_model, corpus, dictionary, mds="mmds")
     pyLDAvis.save_html(vis_data, out_path)
-    logger.info(f"  pyLDAvis saved → {out_path}")
+    logger.info(f"  pyLDAvis saved -> {out_path}")
     return out_path
 
 
@@ -326,7 +326,7 @@ def plot_word_clouds(result: dict, max_topics: int = 6,
         os.makedirs(out_dir, exist_ok=True)
         path = os.path.join(out_dir, f"wordclouds_{engine}_{result['method']}.png")
         fig.savefig(path, bbox_inches="tight")
-        logger.info(f"  Saved word clouds → {path}")
+        logger.info(f"  Saved word clouds -> {path}")
 
     return fig
 
@@ -372,7 +372,7 @@ def plot_doc_topic_heatmap(result: dict, doc_labels: list[str] | None = None,
 
     if out_path:
         fig.savefig(out_path, bbox_inches="tight")
-        logger.info(f"  Saved heatmap → {out_path}")
+        logger.info(f"  Saved heatmap -> {out_path}")
     return fig
 
 

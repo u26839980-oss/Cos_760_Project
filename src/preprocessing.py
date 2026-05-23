@@ -117,7 +117,7 @@ def remove_stopwords(tokens: list[str]) -> list[str]:
 # ─────────────────────────────────────────────────────────────
 
 def build_vocab(all_token_lists: list[list[str]],
-                min_freq: int = 3) -> set[str]:
+                min_freq: int = 2) -> set[str]:
     """
     Build a vocabulary of 'trusted' words: those appearing at least
     min_freq times across the entire corpus.
@@ -136,7 +136,7 @@ def build_vocab(all_token_lists: list[list[str]],
     """
     counter = Counter(tok for doc in all_token_lists for tok in doc)
     vocab = {word for word, freq in counter.items() if freq >= min_freq}
-    logger.info(f"  Vocab size (freq ≥ {min_freq}): {len(vocab):,}")
+    logger.info(f"  Vocab size (freq >= {min_freq}): {len(vocab):,}")
     return vocab
 
 
@@ -221,7 +221,7 @@ def apply_dictionary_correction(token_lists: list[list[str]],
 
 def preprocess_transcripts(transcripts: list[str],
                             apply_correction: bool = True,
-                            min_freq: int = 3,
+                            min_freq: int = 2,
                             min_token_len: int = 2) -> dict:
     """
     Full preprocessing pipeline.
@@ -296,9 +296,17 @@ def preprocess_transcripts(transcripts: list[str],
 # 4.  HELPER: PREPARE GENSIM CORPUS
 # ─────────────────────────────────────────────────────────────
 
-def build_gensim_corpus(token_lists: list[list[str]]):
+def build_gensim_corpus(token_lists: list[list[str]], no_above: float | None = None):
     """
     Build Gensim dictionary and corpus (bag-of-words) from token lists.
+
+    Parameters
+    ----------
+    token_lists : list of token lists
+    no_above    : upper document-frequency threshold for filter_extremes.
+                  Defaults to 0.95 (keeps words appearing in up to 95% of docs).
+                  The old default of 0.5 was too aggressive for small corpora
+                  (12 docs) where health vocab legitimately spans all documents.
 
     Returns
     -------
@@ -307,11 +315,15 @@ def build_gensim_corpus(token_lists: list[list[str]]):
     """
     from gensim import corpora
 
+    n_docs = len(token_lists)
+    # For very small corpora, be permissive - domain vocab SHOULD be common
+    if no_above is None:
+        no_above = 0.95 if n_docs < 50 else 0.85
+
     dictionary = corpora.Dictionary(token_lists)
-    # Filter extremes: remove tokens in <2 docs or >50% of docs
-    dictionary.filter_extremes(no_below=2, no_above=0.5)
+    dictionary.filter_extremes(no_below=2, no_above=no_above)
     corpus = [dictionary.doc2bow(doc) for doc in token_lists]
 
-    logger.info(f"  Gensim dictionary: {len(dictionary)} unique tokens")
+    logger.info(f"  Gensim dictionary: {len(dictionary)} unique tokens "                f"(no_below=2, no_above={no_above})")
     logger.info(f"  Corpus: {len(corpus)} documents")
     return dictionary, corpus

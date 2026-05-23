@@ -2,9 +2,9 @@
 topic_modeling.py
 =================
 Three topic modelling approaches:
-  1. LDA  (Gensim)       – probabilistic bag-of-words model
-  2. BERTopic             – embedding-based neural topic model
-  3. NMF  (sklearn)       – matrix factorisation on TF-IDF
+  1. LDA  (Gensim)       - probabilistic bag-of-words model
+  2. BERTopic             - embedding-based neural topic model
+  3. NMF  (sklearn)       - matrix factorisation on TF-IDF
 
 Each function accepts preprocessed token lists / joined strings
 and returns a standardised result dict for coherence evaluation.
@@ -62,8 +62,8 @@ def run_lda(token_lists: list[list[str]],
     logger.info("=== LDA ===")
     dictionary, corpus = build_gensim_corpus(token_lists)
 
-    if len(dictionary) < 10:
-        logger.warning("  Dictionary too small for LDA – returning empty result.")
+    if len(dictionary) < 3:
+        logger.warning("  Dictionary too small for LDA - returning empty result.")
         return _empty_result("lda")
 
     def _fit(k: int):
@@ -142,8 +142,10 @@ def run_bertopic(joined_strings: list[str],
     """
     Fit BERTopic with multilingual sentence embeddings.
 
-    BERTopic is inherently more robust to ASR noise than LDA because it
-    uses contextual embeddings rather than individual token counts.
+    FIX: We pre-compute embeddings with SentenceTransformer directly,
+    then pass them to BERTopic as a numpy array. This bypasses BERTopic's
+    internal backend selection which tries to import StaticEmbedding
+    (only in sentence-transformers v3+) and crashes on v2.x.
 
     Parameters
     ----------
@@ -167,34 +169,39 @@ def run_bertopic(joined_strings: list[str],
     logger.info(f"  Embedding model: {BERTOPIC_EMBEDDING_MODEL}")
 
     if len(joined_strings) < 4:
-        logger.warning("  Too few documents for BERTopic – returning empty result.")
+        logger.warning("  Too few documents for BERTopic - returning empty result.")
         return _empty_result("bertopic")
 
-    embedding_model = SentenceTransformer(BERTOPIC_EMBEDDING_MODEL)
+    # Step 1: compute embeddings ourselves using sentence-transformers directly.
+    # We do NOT pass the SentenceTransformer object to BERTopic - that triggers
+    # the broken backend import. Instead we pass the raw numpy embedding array.
+    logger.info("  Computing embeddings ...")
+    st_model = SentenceTransformer(BERTOPIC_EMBEDDING_MODEL)
+    embeddings = st_model.encode(joined_strings, show_progress_bar=False,
+                                  convert_to_numpy=True)
+    logger.info(f"  Embeddings shape: {embeddings.shape}")
 
-    # UMAP for dimensionality reduction
+    # Step 2: UMAP + HDBSCAN + Vectorizer (unchanged)
     umap_model = UMAP(
         n_neighbors=min(5, len(joined_strings) - 1),
-        n_components=5,
+        n_components=min(5, len(joined_strings) - 2),
         metric="cosine",
         random_state=random_state,
     )
-
-    # HDBSCAN for clustering
     hdbscan_model = HDBSCAN(
         min_cluster_size=min_topic_size,
         metric="euclidean",
         cluster_selection_method="eom",
         prediction_data=True,
     )
-
-    # Vectorizer for topic words (using our preprocessed text)
     vectorizer = CountVectorizer(min_df=1, ngram_range=(1, 2))
-
     nr_topics = n_topics if isinstance(n_topics, int) else "auto"
 
+    # Step 3: Build BERTopic WITHOUT an embedding_model argument.
+    # Passing embedding_model=None tells BERTopic we will supply embeddings
+    # ourselves, so it never tries to load a SentenceTransformer backend.
     topic_model = BERTopic(
-        embedding_model=embedding_model,
+        embedding_model=None,
         umap_model=umap_model,
         hdbscan_model=hdbscan_model,
         vectorizer_model=vectorizer,
@@ -203,8 +210,11 @@ def run_bertopic(joined_strings: list[str],
         verbose=True,
     )
 
-    logger.info("  Fitting BERTopic …")
-    topics_assigned, probs = topic_model.fit_transform(joined_strings)
+    # Step 4: fit_transform with pre-computed embeddings
+    logger.info("  Fitting BERTopic ...")
+    topics_assigned, probs = topic_model.fit_transform(
+        joined_strings, embeddings=embeddings
+    )
 
     # Extract topic info
     topic_info = topic_model.get_topic_info()
@@ -273,7 +283,7 @@ def run_nmf(joined_strings: list[str],
     Parameters
     ----------
     joined_strings : preprocessed text strings (one per document)
-    n_topics       : number of topics (try 5–10 for this corpus)
+    n_topics       : number of topics (try 5-10 for this corpus)
     n_top_words    : words per topic to extract
     random_state   : reproducibility seed
     max_df         : ignore tokens in > max_df fraction of docs
@@ -289,7 +299,7 @@ def run_nmf(joined_strings: list[str],
     logger.info("=== NMF ===")
 
     if len(joined_strings) < 3:
-        logger.warning("  Too few documents for NMF – returning empty result.")
+        logger.warning("  Too few documents for NMF - returning empty result.")
         return _empty_result("nmf")
 
     vectorizer = TfidfVectorizer(
