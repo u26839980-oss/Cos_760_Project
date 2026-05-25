@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_4_16k.wav",
+  "transcript": "149161 loops in the dna bring enhancers into proximity of the transcription initiation sites even when they are located a distance away in sequence."
+}

@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_64_16k.wav",
+  "transcript": "suk: awoosanayea the ibadanab afameke tawo mohammed haemorrhaging"
+}

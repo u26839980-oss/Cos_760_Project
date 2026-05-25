@@ -1,0 +1,97 @@
+======================================================================
+NATIVE SPEAKER QUALITATIVE REVIEW
+COS760 Group 37 - Setswana COVID-19 Topic Modelling
+Reviewers: Kagiso Tsiane & Shaun Seabo
+======================================================================
+
+For each topic: rate interpretability, identify theme, flag errors.
+Error codes: M=morpheme split, T=tonal confusion, E=English loanword,
+             S=code-switch error, R=repetition, N=none
+
+======================================================================
+ENGINE : AFRISPEECH_WHISPER
+Method : BERTOPIC  (highest NPMI = 0.0036)
+======================================================================
+
+Topic 00: made, homo, al, per, cut, leh, foot, ona, set, asaba
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 01: trivializ, movie midsommar, midsommar, movie, set, horror movie, trivializ trivializ, horror, cult horror, cult
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 02: al tapileba, atrial, atrial fibrillation, compounding, fibrillation, compounding made, developing, developing hydrocephalus, enalay, enalay serratus
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 03: banna goaltre, tumour, goaltre, banna, adnerocytems, basimulose pancreatoximetry, cancer, adnerocytems folaafin, basimulose, carlomotinotomy
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 04: dna, enhancers, dna bring, bring enhancers, bring, enhancers proximity, proximity, balabaragha vanebabrosa, bauchi, ahutabay tukabpropoya
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 05: finished sdhiou, finished, sdhiou tour, sdhiou, tour, busutu, abrone, abrone finished, colorado busutu, busutu bafeno
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+======================================================================
+ENGINE : WHISPER_LARGE_V3
+Method : NMF  (highest NPMI = -0.0290)
+======================================================================
+
+Topic 00: thank, much, thank much, much thank, bote, hatu, tse, xa xo, wakha kwe, tuto
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 01: kho, kha, sa, tsa, ko, ni, te, polo, muna, ta
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 02: otwa, banda, bote, masu, nu, po, lidi, hu, ngu, masole
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 03: tuto, kama, polo, sukolo, hatu, tuto hatu, akhile, tso, po, jaka
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 04: kafa, kano, mama, muna, boni, na, mtu, khasa, neti, hulu
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 05: bai, diri, kuni, bai diri, aro, ou bai, ta, mwa, ou, masole
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________
+
+Topic 06: li, ama, tana, kwe, loho, tana ama, rre, beidi, tu, wakha kwe
+  Interpretability [ Clear / Partial / Unclear ]: ___
+  Theme: ___________________________________
+  Error types (codes above): ________________
+  Example error words: ______________________

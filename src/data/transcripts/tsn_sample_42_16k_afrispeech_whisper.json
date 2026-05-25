@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_42_16k.wav",
+  "transcript": "for jamah uumakinjika efforts and ml (tafeno/tamiv)"
+}

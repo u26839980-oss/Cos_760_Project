@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_44_16k.wav",
+  "transcript": "L'Europe a l'air à ta vie, puis ta montre aura ce que tu as à proposer."
+}

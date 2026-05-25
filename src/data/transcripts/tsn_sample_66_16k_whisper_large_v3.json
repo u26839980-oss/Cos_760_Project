@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_66_16k.wav",
+  "transcript": "Tava ya hor mokho kwa su kolu u tu tse tse leti, djeku pa ma ama."
+}

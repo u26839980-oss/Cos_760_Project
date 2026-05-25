@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_22_16k.wav",
+  "transcript": "Mbe, mbe, ona mile mawtu, mumethe, kafa khare khali lapa, lidi talatakha akwe."
+}

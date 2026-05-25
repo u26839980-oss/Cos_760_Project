@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_36_16k.wav",
+  "transcript": "Ma tsoho ama kutwane akurume ta mwosufu tsoho, ma tsofu tsoho aha."
+}

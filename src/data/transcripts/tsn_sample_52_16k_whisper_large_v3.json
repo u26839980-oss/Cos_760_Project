@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_52_16k.wav",
+  "transcript": "O netuitumalano ya hutsa ya luetola huya kwa China."
+}

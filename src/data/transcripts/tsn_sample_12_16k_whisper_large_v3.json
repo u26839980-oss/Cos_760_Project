@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_12_16k.wav",
+  "transcript": "Mwa xa xo o nopi de, xoba kano ya, mwa ya, mata pa, ale tano, asimu lula xo u kono."
+}

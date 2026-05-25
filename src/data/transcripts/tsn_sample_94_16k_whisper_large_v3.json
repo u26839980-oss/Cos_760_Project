@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_94_16k.wav",
+  "transcript": "Thank you for watching. I hope you enjoyed this video."
+}

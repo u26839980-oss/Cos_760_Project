@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_40_16k.wav",
+  "transcript": "Lepo disa liye dirisite mwisi fwa wakha kwe, fwo patala taba aja mwondwe."
+}

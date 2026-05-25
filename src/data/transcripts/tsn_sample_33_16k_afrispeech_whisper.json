@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_33_16k.wav",
+  "transcript": "ogbonniku tikyinnyea kofa karakamega"
+}

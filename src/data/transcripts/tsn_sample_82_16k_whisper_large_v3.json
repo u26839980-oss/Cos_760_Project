@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_82_16k.wav",
+  "transcript": "On kon ne o akhile nifo ya khawek a fa mora kho kha se terat a san roun."
+}

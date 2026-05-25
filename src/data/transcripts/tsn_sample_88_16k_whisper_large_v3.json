@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_88_16k.wav",
+  "transcript": "Ra pozo o la kile lukwa lukwa pozo fanyi ata misa dupozo niti."
+}

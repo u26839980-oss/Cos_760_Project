@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_29_16k.wav",
+  "transcript": "Kho, kho, mo, kho, kho, wa, se, kolo, a, re, bu, su, do, ba, fi, ni, cha, ra, bu, kwa, mo, a, kho, o, mu, shwa."
+}

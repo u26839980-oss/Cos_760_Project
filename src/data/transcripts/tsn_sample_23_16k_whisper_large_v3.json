@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_23_16k.wav",
+  "transcript": "E ngu, mwen e ngu wakwebu, potan, okorokile maban, kwa kopan ngu, yadu kwebu."
+}

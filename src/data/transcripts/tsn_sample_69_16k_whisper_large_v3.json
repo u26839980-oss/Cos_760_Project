@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_69_16k.wav",
+  "transcript": "Khunale tulano makarengkha banale mola udiwama sepala mabapi lidi teda zidi sinye hilingi."
+}

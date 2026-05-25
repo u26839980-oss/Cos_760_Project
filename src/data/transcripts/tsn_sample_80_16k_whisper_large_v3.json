@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_80_16k.wav",
+  "transcript": "Tli ni ki e, gebo ta le lojwa wana, wata la yame tihufa tu."
+}

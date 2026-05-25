@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_95_16k.wav",
+  "transcript": "mmolu ona-limata akotoye labileka, matarah"
+}

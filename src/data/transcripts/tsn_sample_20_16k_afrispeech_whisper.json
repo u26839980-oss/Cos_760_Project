@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_20_16k.wav",
+  "transcript": "oretiwa mrs. granny otokahgokechukwu yar mesyl."
+}

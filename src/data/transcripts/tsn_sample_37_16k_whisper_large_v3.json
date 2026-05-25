@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_37_16k.wav",
+  "transcript": "Le tso xo le li ku tso ane li kuru me ta, le sufu tso xo la xa xo."
+}

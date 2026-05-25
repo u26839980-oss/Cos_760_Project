@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_24_16k.wav",
+  "transcript": "Ra kwebu, oba la chelete ya kaa kwe."
+}

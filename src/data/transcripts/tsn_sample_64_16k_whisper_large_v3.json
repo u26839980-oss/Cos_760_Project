@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_64_16k.wav",
+  "transcript": "Si ko rosa Nigeria li bafana bafana ki tau mwe. Mumu tamiko nwa malo."
+}

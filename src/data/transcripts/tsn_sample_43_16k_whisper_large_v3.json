@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_43_16k.wav",
+  "transcript": "Mwa kudi one au gwa le la ato faki la mwola tua le vanku."
+}

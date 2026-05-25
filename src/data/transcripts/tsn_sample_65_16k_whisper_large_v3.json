@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_65_16k.wav",
+  "transcript": "Ba reki le le ba di le le set la u chore, ba na ba di re motemi komo kolona."
+}

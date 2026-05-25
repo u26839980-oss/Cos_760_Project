@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_89_16k.wav",
+  "transcript": "Munguta bana wa kiriti ya buhutano unahuta bai tutika upopo ya bolelo."
+}

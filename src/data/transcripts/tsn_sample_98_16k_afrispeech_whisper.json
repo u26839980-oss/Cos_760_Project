@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_98_16k.wav",
+  "transcript": "mother was found to be in rapid atrial fibrillation with a compounding rate."
+}

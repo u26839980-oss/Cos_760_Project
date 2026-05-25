@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_34_16k.wav",
+  "transcript": "Ma lome ou rekisite beze kwa po yase konpon."
+}

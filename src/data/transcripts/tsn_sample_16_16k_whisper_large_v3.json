@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_16_16k.wav",
+  "transcript": "Ta me lo ya ta hu, e tsa vi si tse di polo xor."
+}

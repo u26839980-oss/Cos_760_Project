@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_50_16k.wav",
+  "transcript": "Borasa inse badumelafa bakoneo kubona pwelezu ya ditiko tabuni."
+}

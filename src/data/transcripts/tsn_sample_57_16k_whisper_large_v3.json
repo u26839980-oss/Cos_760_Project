@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_57_16k.wav",
+  "transcript": "Bou mè bat adira di tapè lo kwa kereken ka son takha."
+}

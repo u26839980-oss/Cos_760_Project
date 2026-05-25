@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_65_16k.wav",
+  "transcript": "barray chilele said tahorree bannah badiru motelu."
+}

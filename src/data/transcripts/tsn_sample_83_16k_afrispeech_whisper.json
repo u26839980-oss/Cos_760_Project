@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_83_16k.wav",
+  "transcript": "home bnogereke in ikirun"
+}

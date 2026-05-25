@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_20_16k.wav",
+  "transcript": "O re ki wa mwosesi, wame, o troka kwa kietu ya lesele."
+}

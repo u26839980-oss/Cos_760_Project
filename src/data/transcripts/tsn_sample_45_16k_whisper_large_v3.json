@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_45_16k.wav",
+  "transcript": "Masole aneakopani waonga mping hui banga njitanguwa."
+}

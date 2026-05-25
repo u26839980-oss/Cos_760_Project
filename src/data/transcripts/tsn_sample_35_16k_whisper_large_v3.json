@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_35_16k.wav",
+  "transcript": "Khadile, o tamikile k'a nanyo, ya kosa khadile, kashile, mumu tamiko mwaches."
+}

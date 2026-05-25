@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_10_16k.wav",
+  "transcript": "Mwisi mana aro tla, aro moleti kanyo, wetla mwotu sa khobare, mwola palo."
+}

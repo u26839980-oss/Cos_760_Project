@@ -73,6 +73,7 @@ def compute_coherence(topics: list[dict],
             corpus=corpus,
             dictionary=dictionary,
             coherence=coherence,
+            processes=1,
         )
     else:
         # c_npmi, c_v, c_uci need raw texts
@@ -81,6 +82,7 @@ def compute_coherence(topics: list[dict],
             texts=token_lists,
             dictionary=dictionary,
             coherence=coherence,
+            processes=1,
         )
 
     score = cm.get_coherence()
@@ -262,68 +264,3 @@ def save_evaluation_results(df: pd.DataFrame, out_path: str):
     df.to_csv(out_path, index=False)
     logger.info(f"  Evaluation results saved -> {out_path}")
     return out_path
-
-
-# ─────────────────────────────────────────────────────────────
-# 6.  SUMMARY TABLE
-# ─────────────────────────────────────────────────────────────
-
-def print_summary_table(df: pd.DataFrame):
-    """
-    Print a formatted summary table of evaluation results.
-
-    Columns: engine, method, n_topics, npmi, umass, diversity
-    Highlights the best NPMI per engine with an asterisk (*).
-
-    Parameters
-    ----------
-    df : DataFrame returned by evaluate_all_conditions()
-    """
-    if df.empty:
-        print("\n  [Evaluation] No results to display.\n")
-        return
-
-    col_w = {"engine": 14, "method": 10, "n_topics": 9,
-              "npmi": 9, "umass": 9, "diversity": 10}
-    header = (
-        f"  {'Engine':<{col_w['engine']}}"
-        f"{'Method':<{col_w['method']}}"
-        f"{'N_Topics':>{col_w['n_topics']}}"
-        f"{'NPMI':>{col_w['npmi']}}"
-        f"{'UMass':>{col_w['umass']}}"
-        f"{'Diversity':>{col_w['diversity']}}"
-    )
-    sep = "  " + "-" * (sum(col_w.values()))
-
-    print(f"\n{'='*60}")
-    print("  EVALUATION SUMMARY")
-    print(f"{'='*60}")
-    print(header)
-    print(sep)
-
-    # Find the best NPMI row per engine
-    best_idx = set()
-    for eng in df["engine"].unique():
-        sub = df[df["engine"] == eng]
-        if not sub.empty:
-            best_idx.add(sub["npmi"].idxmax())
-
-    prev_engine = None
-    for idx, row in df.iterrows():
-        if prev_engine and row["engine"] != prev_engine:
-            print(sep)
-        marker = "*" if idx in best_idx else " "
-        print(
-            f"  {row['engine']:<{col_w['engine']}}"
-            f"{row['method']:<{col_w['method']}}"
-            f"{int(row['n_topics']):>{col_w['n_topics']}}"
-            f"{row['npmi']:>{col_w['npmi']}.4f}"
-            f"{row['umass']:>{col_w['umass']}.4f}"
-            f"{row['diversity']:>{col_w['diversity']}.4f}"
-            f"  {marker}"
-        )
-        prev_engine = row["engine"]
-
-    print(sep)
-    print("  * = best NPMI for that engine")
-    print(f"{'='*60}\n")

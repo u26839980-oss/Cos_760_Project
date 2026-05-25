@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_6_16k.wav",
+  "transcript": "Muna kuni eo, muna kuni eo, pone a, sina kache hulu huli, kalu mtu mtu."
+}

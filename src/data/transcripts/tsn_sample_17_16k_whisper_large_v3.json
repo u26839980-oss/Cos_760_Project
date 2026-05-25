@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_17_16k.wav",
+  "transcript": "Fasa Nigeria, sita mikilo kwele ya jinau, le Afrika bura mupule nyama ya midupi."
+}

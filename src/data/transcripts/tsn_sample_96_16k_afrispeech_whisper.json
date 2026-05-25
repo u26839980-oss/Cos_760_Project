@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_96_16k.wav",
+  "transcript": "magu okoro developing hydrocephalus."
+}

@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_93_16k.wav",
+  "transcript": "rackleo amofegha fangha cheletia pension"
+}

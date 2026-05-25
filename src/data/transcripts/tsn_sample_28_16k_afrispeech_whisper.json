@@ -1,0 +1,5 @@
+{
+  "engine": "afrispeech_whisper",
+  "file": "data/transcripts\\tsn_sample_28_16k.wav",
+  "transcript": "nancy: otukwaneji ubannella, rutherford, akpawfu"
+}

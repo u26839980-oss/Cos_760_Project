@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_100_16k.wav",
+  "transcript": "Bi wara bile ou tabi lweke le pata la chawde."
+}

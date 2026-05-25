@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_32_16k.wav",
+  "transcript": "Mo di se khala tle lelwa kutiki nya milwa khafwe fay ba dirak aru."
+}

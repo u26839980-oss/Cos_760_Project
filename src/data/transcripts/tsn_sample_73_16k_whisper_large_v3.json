@@ -1,0 +1,5 @@
+{
+  "engine": "whisper_large_v3",
+  "file": "data/transcripts\\tsn_sample_73_16k.wav",
+  "transcript": "Ba na ba tsa maya ka pe si pasi chi kowe ya kwa papusi bo gwa balo."
+}
