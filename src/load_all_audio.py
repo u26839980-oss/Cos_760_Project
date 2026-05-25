@@ -2,8 +2,10 @@ import os
 from datasets import load_dataset
 import soundfile as sf
 
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+
 # 1. Define output directory path
-OUTPUT_DIR = "data/audio"
+OUTPUT_DIR = os.path.join(SRC_DIR, "data", "audio")
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 print("Loading dataset from Hugging Face...")
@@ -16,7 +18,7 @@ dataset = load_dataset(
     streaming=True
 )
 
-# 3. Fetch and save the first 20 audio files
+# 3. Fetch and save the first audio files
 count = 0
 max_files = 100
 
@@ -42,4 +44,4 @@ for sample in dataset:
     
     count += 1
 
-print("\nProcessing complete! All 20 files are saved in 'src/data/audio'.")
+print(f"\nProcessing complete! All {count} files are saved in '{OUTPUT_DIR}'.")
