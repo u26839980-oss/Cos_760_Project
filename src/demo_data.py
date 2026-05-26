@@ -11,7 +11,7 @@ intentional 'ASR noise' variants to test the correction pipeline.
 Usage
 -----
     from demo_data import generate_demo_transcripts
-    transcripts_by_engine = generate_demo_transcripts(n_episodes=10)
+    transcripts_by_engine = generate_demo_transcripts(n_episodes=10, language="tsn")
 """
 
 import random
@@ -135,14 +135,14 @@ def _generate_episode(topic_weights: dict, n_words: int = 300,
     return " ".join(words)
 
 
-def generate_demo_transcripts(n_episodes: int = 12) -> dict[str, list[str]]:
+def generate_demo_transcripts(n_episodes: int = 12,
+                              language: str = "tsn") -> dict[str, list[str]]:
     """
-    Generate synthetic transcripts for all three ASR engines.
+    Generate synthetic transcripts for three ASR engine slots.
 
-    Simulates different ASR quality levels:
-    - Whisper: lowest noise (best engine)
-    - Lelapa:  medium noise (African language specialist)
-    - wav2vec: highest noise (zero-shot, most errors)
+    Simulates different ASR quality levels. Engine labels depend on the
+    selected language so demo mode reflects the actual experiment setup
+    instead of legacy placeholder names.
 
     Each engine gets the same underlying episode content but with
     different noise levels.
@@ -178,12 +178,20 @@ def generate_demo_transcripts(n_episodes: int = 12) -> dict[str, list[str]]:
         transcript = _generate_episode(archetype, n_words=n_words, noise_level=0.0)
         base_transcripts.append(transcript)
 
-    # Apply different noise levels per engine
-    noise_levels = {
-        "whisper": 0.03,   # 3% noise – best model
-        "lelapa":  0.07,   # 7% noise – good but more African-language errors
-        "wav2vec": 0.15,   # 15% noise – zero-shot, most errors
-    }
+    if language == "tsn":
+        noise_levels = {
+            "afrispeech_whisper": 0.03,
+            "whisper_large_v3": 0.07,
+            "setswana_whisper_ft": 0.05,
+        }
+        drop_repeat_engine = None
+    else:
+        noise_levels = {
+            "whisper_zulu": 0.03,
+            "lelapa": 0.05,
+            "mms": 0.12,
+        }
+        drop_repeat_engine = "mms"
 
     transcripts_by_engine = {}
     for engine, noise in noise_levels.items():
@@ -191,8 +199,8 @@ def generate_demo_transcripts(n_episodes: int = 12) -> dict[str, list[str]]:
         for base in base_transcripts:
             words = base.split()
             noisy_words = [_add_noise(w, noise) for w in words]
-            # wav2vec also sometimes drops or repeats words
-            if engine == "wav2vec":
+            # The weakest demo engine also sometimes drops or repeats words.
+            if engine == drop_repeat_engine:
                 final_words = []
                 for w in noisy_words:
                     if random.random() < 0.03:

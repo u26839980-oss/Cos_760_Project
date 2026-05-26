@@ -11,8 +11,8 @@ Kagiso Tsiane & Shaun Seabo can use this to:
 
 Usage
 -----
-  python native_speaker_eval.py --engine whisper --method lda
-  python native_speaker_eval.py --input outputs/results/topics_whisper.json
+  python src/native_speaker_eval.py --engine whisper --method lda
+  python src/native_speaker_eval.py --input src/outputs/results/topics_whisper.json
 """
 
 import os
@@ -21,6 +21,9 @@ import json
 import argparse
 import csv
 from datetime import datetime
+
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+RESULTS_DIR = os.path.join(SRC_DIR, "outputs", "results")
 
 
 # ─────────────────────────────────────────────────────────────
@@ -180,7 +183,7 @@ def compute_review_stats(reviews: list[dict]) -> dict:
 def main():
     parser = argparse.ArgumentParser(description="Native Speaker Evaluation Tool")
     parser.add_argument("--input", default=None,
-                        help="Path to topics JSON file (e.g. outputs/results/topics_whisper.json)")
+                        help="Path to topics JSON file (e.g. src/outputs/results/topics_whisper.json)")
     parser.add_argument("--engine", default="whisper",
                         help="ASR engine name (if not using --input)")
     parser.add_argument("--method", default="lda",
@@ -195,7 +198,7 @@ def main():
         # Try to infer engine from filename
         engine = os.path.basename(args.input).replace("topics_", "").replace(".json", "")
     else:
-        json_path = f"outputs/results/topics_{args.engine}.json"
+        json_path = os.path.join(RESULTS_DIR, f"topics_{args.engine}.json")
         if not os.path.exists(json_path):
             print(f"  Error: {json_path} not found. Run pipeline.py first.")
             sys.exit(1)
@@ -216,7 +219,7 @@ def main():
     reviews = interactive_review(engine, method, topics, reviewer)
 
     # Save
-    out_path = args.out or f"outputs/results/review_{engine}_{method}.csv"
+    out_path = args.out or os.path.join(RESULTS_DIR, f"review_{engine}_{method}.csv")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     save_reviews(reviews, out_path)
 

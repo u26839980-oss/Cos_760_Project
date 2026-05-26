@@ -20,6 +20,7 @@ more robust to individual token errors – but still benefits from stop-
 word removal.
 """
 
+import os
 import re
 import logging
 import string
@@ -28,6 +29,11 @@ from Levenshtein import distance as levenshtein_distance
 import nltk
 
 logger = logging.getLogger(__name__)
+SRC_DIR = os.path.dirname(os.path.abspath(__file__))
+LOCAL_NLTK_DATA = os.path.join(SRC_DIR, ".nltk_data")
+os.makedirs(LOCAL_NLTK_DATA, exist_ok=True)
+if LOCAL_NLTK_DATA not in nltk.data.path:
+    nltk.data.path.insert(0, LOCAL_NLTK_DATA)
 
 # ─────────────────────────────────────────────────────────────
 # 0.  SETSWANA STOPWORDS
@@ -63,11 +69,48 @@ SETSWANA_STOPWORDS = {
 try:
     nltk.data.find("corpora/stopwords")
 except LookupError:
-    nltk.download("stopwords", quiet=True)
+    nltk.download("stopwords", download_dir=LOCAL_NLTK_DATA, quiet=True)
 
 from nltk.corpus import stopwords as nltk_sw
 ENGLISH_STOPWORDS = set(nltk_sw.words("english"))
 ALL_STOPWORDS = SETSWANA_STOPWORDS | ENGLISH_STOPWORDS
+
+# Common ASR error forms observed in the project outputs.
+# These are lightweight normalisation rules, not model fine-tuning.
+ASR_NORMALIZATION_MAP = {
+    "vaccin": "vaccine",
+    "vaksin": "vaccine",
+    "vasine": "vaccine",
+    "symptons": "symptoms",
+    "symtoms": "symptoms",
+    "symptms": "symptoms",
+    "symtoms": "symptoms",
+    "haspital": "hospital",
+    "hospitel": "hospital",
+    "ospital": "hospital",
+    "lokdown": "lockdown",
+    "lockdawn": "lockdown",
+    "lochdown": "lockdown",
+    "tesing": "testing",
+    "tsting": "testing",
+    "testng": "testing",
+    "pandemc": "pandemic",
+    "pandamic": "pandemic",
+    "pandmic": "pandemic",
+    "quaratine": "quarantine",
+    "quarentine": "quarantine",
+    "quaranteen": "quarantine",
+    "bolwesti": "bolwetsi",
+    "bolwetse": "bolwetsi",
+    "blwetsi": "bolwetsi",
+    "commuity": "community",
+    "comunity": "community",
+    "commnity": "community",
+    "goverment": "government",
+    "govenment": "government",
+    "govermnent": "government",
+    "govment":"government",
+}
 
 
 # ─────────────────────────────────────────────────────────────
@@ -110,6 +153,11 @@ def tokenise(text: str, min_len: int = 2) -> list[str]:
 def remove_stopwords(tokens: list[str]) -> list[str]:
     """Remove tokens that appear in the combined stopword set."""
     return [t for t in tokens if t not in ALL_STOPWORDS]
+
+
+def normalize_asr_tokens(tokens: list[str]) -> list[str]:
+    """Map frequent ASR variants to canonical forms before topic modelling."""
+    return [ASR_NORMALIZATION_MAP.get(token, token) for token in tokens]
 
 
 # ─────────────────────────────────────────────────────────────
@@ -250,6 +298,7 @@ def preprocess_transcripts(transcripts: list[str],
     for i, text in enumerate(transcripts):
         cleaned = clean_text(text)
         tokens = tokenise(cleaned, min_len=min_token_len)
+        tokens = normalize_asr_tokens(tokens)
         tokens = remove_stopwords(tokens)
         raw_token_lists.append(tokens)
         logger.debug(f"  Doc {i}: {len(tokens)} tokens after cleaning")
